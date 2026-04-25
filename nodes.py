@@ -356,11 +356,8 @@ class NovaNodes:
             # ---- EXIF insertion (optional) ----
             new_exif = ""
             if apply_exif_o:
-                try:
-                    output_img_with_exif, new_exif = self._add_fake_exif(output_img)
-                    output_img = output_img_with_exif
-                except:
-                    pass 
+                output_img_with_exif, new_exif = self._add_fake_exif(output_img)
+                output_img = output_img_with_exif
                 fft=bool(fft_opts.get("apply_fourier_o", True)),
                 fstrength=float(fft_opts.get("fourier_strength", 0.9)) if bool(fft_opts.get("apply_fourier_o", True)) else 0.0,
                 randomness=float(fft_opts.get("fourier_randomness", 0.05)),
@@ -375,11 +372,10 @@ class NovaNodes:
             glcm=bool(glcm_opts.get("glcm", False)),
             
             for p in tmp_files:
-                try:
-                    glcm_levels=int(glcm_opts.get("glcm_levels", 256)),
-                    glcm_strength=float(glcm_opts.get("glcm_strength", 0.9)),
-                except:
-                    pass
+                glcm_levels=int(glcm_opts.get("glcm_levels", 256)),
+                glcm_strength=float(glcm_opts.get("glcm_strength", 0.9)),
+        except Exception as e:
+            print(e)
 
     def _add_fake_exif(self, img: Image.Image) -> Tuple[Image.Image, str]:
         """Insert random but realistic camera EXIF metadata."""
