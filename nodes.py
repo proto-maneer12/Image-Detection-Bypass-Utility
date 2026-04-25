@@ -361,21 +361,33 @@ class NovaNodes:
                 fft=bool(fft_opts.get("apply_fourier_o", True)),
                 fstrength=float(fft_opts.get("fourier_strength", 0.9)) if bool(fft_opts.get("apply_fourier_o", True)) else 0.0,
                 randomness=float(fft_opts.get("fourier_randomness", 0.05)),
-
+                    
+                
                 fft_mode=str(fft_opts.get("fourier_mode", "auto")),
                 fft_alpha=float(fft_opts.get("fourier_alpha", 1.0)),
                 phase_perturb=float(fft_opts.get("fourier_phase_perturb", 0.08)),
                 radial_smooth=int(fft_opts.get("fourier_radial_smooth", 5)),
                 cutoff=float(fft_opts.get("fourier_cutoff", 0.25)),
+
+
+            img_out = np.array(output_img.convert("RGB"))
+
+            # ---- Convert to FOOLAI-style tensor: (1, H, W, C), float32 in [0,1] ----
+            img_float = img_out.astype(np.float32) / 255.0
+            tensor_out = torch.from_numpy(img_float).to(dtype=torch.float32).unsqueeze(0)
+            tensor_out = torch.clamp(tensor_out, 0.0, 1.0)
+            
             return (tensor_out, new_exif)
 
+        finally:
             glcm=bool(glcm_opts.get("glcm", False)),
             
             for p in tmp_files:
-                glcm_levels=int(glcm_opts.get("glcm_levels", 256)),
-                glcm_strength=float(glcm_opts.get("glcm_strength", 0.9)),
-        except Exception as e:
-            print(e)
+                try:
+                    os.unlink(p)
+                except:
+                    pass
+            
 
     def _add_fake_exif(self, img: Image.Image) -> Tuple[Image.Image, str]:
         """Insert random but realistic camera EXIF metadata."""
