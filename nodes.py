@@ -372,7 +372,8 @@ class NovaNodes:
                 cutoff=float(fft_opts.get("fourier_cutoff", 0.25)),
             return (tensor_out, new_exif)
 
-                glcm=bool(glcm_opts.get("glcm", False)),
+            glcm=bool(glcm_opts.get("glcm", False)),
+            
             for p in tmp_files:
                 try:
                     glcm_levels=int(glcm_opts.get("glcm_levels", 256)),
